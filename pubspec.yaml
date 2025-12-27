@@ -1,0 +1,30 @@
+name: fiber_foundation_locale
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  injectable: ^2.5.2
+  get_it: ^8.2.0
+  intl: ^0.20.2
+  shared_preferences: ^2.5.3
+  rxdart: ^0.28.0
+  internet_connection_checker_plus: ^2.9.1+2
+  http: ^1.6.0
+  xml: ^6.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  injectable_generator: ^2.9.0
+  build_runner: ^2.9.0
+
+flutter:
+  uses-material-design: true
