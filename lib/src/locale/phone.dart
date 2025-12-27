@@ -29,9 +29,99 @@
 
 import '../../fiber_foundation_locale.dart';
 
+enum PhoneCountry { fr, us, uk }
+
 class AppPhone {
+  // ignore: unused_field
   final AppRegionCode _source;
   final AppRegionCode _target;
 
   AppPhone({required AppRegionCode source, required AppRegionCode target}) : _source = source, _target = target;
+
+  String get countryCode => _PhoneMetadata.countryCode(_target.phone);
+
+  bool isValid(String input) {
+    final digits = _sanitize(input);
+    return _PhoneMetadata.isValid(_target.phone, digits);
+  }
+
+  String format(String input) {
+    final digits = _sanitize(input);
+
+    if (!_PhoneMetadata.isValid(_target.phone, digits)) return input;
+    return _PhoneMetadata.format(_target.phone, digits);
+  }
+
+  RegExp get validationRegex => _PhoneMetadata.validationRegex(_target);
+
+  RegExp get formatRegex => _PhoneMetadata.formatRegex(_target);
+
+  String _sanitize(String input) => input.replaceAll(RegExp(r'[^\d+]'), '');
+}
+
+class _PhoneMetadata {
+  static String countryCode(PhoneCountry country) => switch (country) {
+    PhoneCountry.fr => '+33',
+    PhoneCountry.us => '+1',
+    PhoneCountry.uk => '+44',
+  };
+
+  static RegExp validationRegex(AppRegionCode region) => switch (region) {
+    AppRegionCode.fr => RegExp(r'^(?:\+33|0)[1-9]\d{8}$'),
+    AppRegionCode.us => RegExp(r'^(?:\+1)?\d{10}$'),
+    AppRegionCode.uk => RegExp(r'^(?:\+44|0)7\d{9}$'),
+  };
+
+  static RegExp formatRegex(AppRegionCode region) => switch (region) {
+    AppRegionCode.fr => RegExp(r'^(?:\+33\s?|0)[1-9](?:\s?\d{2}){4}$'),
+    AppRegionCode.us => RegExp(r'^(?:\+1\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$'),
+    AppRegionCode.uk => RegExp(r'^(?:\+44\s?|0)7\d{3}\s?\d{6}$'),
+  };
+
+  static bool isValid(PhoneCountry country, String digits) {
+    switch (country) {
+      case PhoneCountry.fr:
+        return RegExp(r'^(?:\+33|0)[1-9]\d{8}$').hasMatch(digits);
+
+      case PhoneCountry.us:
+        return RegExp(r'^(?:\+1)?\d{10}$').hasMatch(digits);
+
+      case PhoneCountry.uk:
+        return RegExp(r'^(?:\+44|0)7\d{9}$').hasMatch(digits);
+    }
+  }
+
+  static String format(PhoneCountry country, String digits) {
+    switch (country) {
+      case PhoneCountry.fr:
+        final d = digits.startsWith('+33')
+            ? digits.substring(3)
+            : digits.startsWith('0')
+            ? digits.substring(1)
+            : digits;
+
+        return '+33 ${d.substring(0, 1)} ${d.substring(1, 3)} ${d.substring(3, 5)} ${d.substring(5, 7)} ${d.substring(7)}';
+
+      case PhoneCountry.us:
+        final d = digits.startsWith('+1') ? digits.substring(2) : digits;
+        return '+1 (${d.substring(0, 3)}) ${d.substring(3, 6)}-${d.substring(6)}';
+
+      case PhoneCountry.uk:
+        final d = digits.startsWith('+44')
+            ? digits.substring(3)
+            : digits.startsWith('0')
+            ? digits.substring(1)
+            : digits;
+
+        return '+44 ${d.substring(0, 4)} ${d.substring(4)}';
+    }
+  }
+}
+
+extension AppRegionCodePhoneExtension on AppRegionCode {
+  PhoneCountry get phone => switch (this) {
+    AppRegionCode.fr => PhoneCountry.fr,
+    AppRegionCode.us => PhoneCountry.us,
+    AppRegionCode.uk => PhoneCountry.uk,
+  };
 }

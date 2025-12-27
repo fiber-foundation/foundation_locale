@@ -38,6 +38,7 @@ import 'src/speed.dart';
 import 'src/temperature.dart';
 import 'src/time.dart';
 import 'src/volume.dart';
+import 'src/week.dart';
 import 'src/weight.dart';
 
 Future<void> main() async {
@@ -63,7 +64,18 @@ class _Main extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Area(), Currency(), Distance(), Number(), Speed(), Time(), Temperature(), Volume(), Weight()],
+              children: [
+                Area(),
+                Currency(),
+                Distance(),
+                Number(),
+                Speed(),
+                Time(),
+                Temperature(),
+                Volume(),
+                Weight(),
+                Week(),
+              ],
             ),
           ),
         ),

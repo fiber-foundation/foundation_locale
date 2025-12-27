@@ -27,11 +27,32 @@
 // is a violation of applicable intellectual property laws and will result
 // in legal action.
 
-import '../../fiber_foundation_locale.dart';
+import 'package:fiber_foundation_locale/fiber_foundation_locale.dart';
+import 'package:flutter/material.dart';
 
-class AppRegion {
-  final AppRegionCode _source;
-  final AppRegionCode _target;
+import '../widgets/section.dart';
 
-  AppRegion({required AppRegionCode source, required AppRegionCode target}) : _source = source, _target = target;
+class Week extends StatelessWidget {
+  const Week({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final week = AppLocale.week;
+
+    return Section(
+      title: "Week (FR → US)",
+      items: [
+        SectionItem(label: "First day of week", value: week.format(week.firstDay)),
+        SectionItem(label: "Today", value: week.format(week.today)),
+        SectionItem(label: "Ordered days (localized)", value: week.formattedWeek().join(", ")),
+        SectionItem(label: "Monday label", value: week.format(Weekday.monday)),
+        SectionItem(label: "Tuesday label", value: week.format(Weekday.tuesday)),
+        SectionItem(label: "Wednesday label", value: week.format(Weekday.wednesday)),
+        SectionItem(label: "Thursday label", value: week.format(Weekday.thursday)),
+        SectionItem(label: "Friday label", value: week.format(Weekday.friday)),
+        SectionItem(label: "Saturday label", value: week.format(Weekday.saturday)),
+        SectionItem(label: "Sunday label", value: week.format(Weekday.sunday)),
+      ],
+    );
+  }
 }

@@ -29,6 +29,8 @@
 
 library;
 
+import 'package:timeago/timeago.dart' as timeago;
+
 import './src/locale/area.dart';
 import './src/locale/calendar.dart';
 import './src/locale/currency.dart';
@@ -36,13 +38,13 @@ import './src/locale/date.dart';
 import './src/locale/measurement.dart';
 import './src/locale/number.dart';
 import './src/locale/phone.dart';
-import './src/locale/region.dart';
 import './src/locale/temperature.dart';
 import './src/locale/time.dart';
 import './src/locale/volume.dart';
 import './src/locale/week.dart';
 import './src/locale/weight.dart';
 import 'di/di.dart';
+import 'extensions/region_code.dart';
 
 export 'src/locale/area.dart';
 export 'src/locale/calendar.dart';
@@ -51,7 +53,6 @@ export 'src/locale/date.dart';
 export 'src/locale/measurement.dart';
 export 'src/locale/number.dart';
 export 'src/locale/phone.dart';
-export 'src/locale/region.dart';
 export 'src/locale/temperature.dart';
 export 'src/locale/time.dart';
 export 'src/locale/volume.dart';
@@ -74,12 +75,17 @@ class AppLocale {
     if (isInitialized) return;
 
     await configureFoundationLocaleServices();
+    timeago.setLocaleMessages(target.languageCode, foundationTimeago[target.languageCode]);
     _sourceRegion = source;
     _targetRegion = target;
   }
 
   static void setSource(AppRegionCode source) => _sourceRegion = source;
-  static void setTarget(AppRegionCode target) => _targetRegion = target;
+
+  static void setTarget(AppRegionCode target) {
+    timeago.setLocaleMessages(target.languageCode, foundationTimeago[target.languageCode]);
+    _targetRegion = target;
+  }
 
   static void _assertInitialized() {
     assert(isInitialized, 'AppLocale.initialize() must be called before accessing AppLocale.*');
@@ -93,11 +99,6 @@ class AppLocale {
   static AppRegionCode get target {
     _assertInitialized();
     return _targetRegion!;
-  }
-
-  static AppRegion get region {
-    _assertInitialized();
-    return _instance._region;
   }
 
   static AppNumber get number {
@@ -160,7 +161,6 @@ class AppLocale {
     return _instance._week;
   }
 
-  final AppRegion _region = AppRegion(source: source, target: target);
   final AppNumber _number = AppNumber(source: source, target: target);
   final AppDate _date = AppDate(source: source, target: target);
   final AppTemperature _temperature = AppTemperature(source: source, target: target);
